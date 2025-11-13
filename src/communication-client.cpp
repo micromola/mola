@@ -43,7 +43,7 @@ void setup() {
 // Loop Function Definition
 void loop() {
     // Test message to send
-    char *message = "Hello";
+    char *message = "Hello World";
 
     // Send message via ESP-NOW
     esp_err_t result = esp_now_send(receiverMAC, (uint8_t *)message, strlen(message) + 1);
