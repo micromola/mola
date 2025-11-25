@@ -1,5 +1,7 @@
-#include <esp_now.h>
-#include <WiFi.h>
+#include <communication.h>
+
+// Global Variable for testing
+Packet packet;
 
 // Function Declaration
 void OnDataRecv(const uint8_t *mac_addr, const uint8_t *incomingData, int len);
@@ -28,14 +30,17 @@ void loop() {
 
 // Callback Function Definition
 void OnDataRecv(const uint8_t *mac_addr, const uint8_t *incomingData, int len) {
-    // Store and print test message
-    const int maxLength = 100;
-    char message[maxLength];
-    if (len >= maxLength){
-        len = maxLength - 1;
+    // Check the packet size to the struct size
+    if (len != sizeof(Packet)) {
+        Serial.printf("Received packet size is not the same as the struct size.\n");
+        return;
     }
-    memcpy(message, incomingData, len);
-    message[len] = '\0'; // set string null character in case
-    Serial.print("Received message: ");
-    Serial.println(message);
+    
+    // Copy and print packet data
+    memcpy(&packet, incomingData, sizeof(packet));
+    packet.message[MAX_MESSAGE - 1] = '\0';
+    Serial.printf("Packet %d has been received\n");
+    Serial.printf("Latitude: %f\n", packet.latitude);
+    Serial.printf("Longitude: %f\n", packet.longitude);
+    Serial.printf("Msg: %s\n", packet.message);
 }
