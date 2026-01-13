@@ -1,8 +1,10 @@
-#include <esp_now.h>
-#include <WiFi.h>
+#include <communication.h>
 
 // MAC Address (See README for for information)
-uint8_t receiverMAC[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+uint8_t serverMAC[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+// Global Variable for testing
+Packet packet;
 
 // Function Declaration
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
@@ -27,7 +29,7 @@ void setup() {
 
     // Register the server as a peer
     esp_now_peer_info_t peerInfo;
-    memcpy(peerInfo.peer_addr, receiverMAC, 6); // Copy 6 bytes into peer info structure.
+    memcpy(peerInfo.peer_addr, serverMAC, 6); // Copy 6 bytes into peer info structure.
     peerInfo.channel = 0;
     peerInfo.encrypt = false;
 
@@ -42,16 +44,21 @@ void setup() {
 
 // Loop Function Definition
 void loop() {
-    // Test message to send
+    // Populate packet with sample data
+    packet.id += 1;
+    packet.latitude += 0.01;
+    packet.longitude += 0.01;
     char *message = "Hello World";
+    strncpy(packet.message, message, MAX_MESSAGE - 1);
+    packet.message[MAX_MESSAGE-1] = '\0';
 
-    // Send message via ESP-NOW
-    esp_err_t result = esp_now_send(receiverMAC, (uint8_t *)message, strlen(message) + 1);
+    // Send packet via ESP-NOW
+    esp_err_t result = esp_now_send(serverMAC, (uint8_t *)&packet, sizeof(packet));
 
     if (result == ESP_OK) {
-        Serial.println("Message sent: Hello");
+        Serial.println("Packet has been sent");
     } else {
-        Serial.println("Error sending message");
+        Serial.println("Error sending packet");
     }
 
     // Send every 10 seconds
