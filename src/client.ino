@@ -3,8 +3,8 @@
 #include <Adafruit_GPS.h>
 
 // Sender and Receiver MAC addresses
-const uint8_t MAC_SENDER_1[]   = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-const uint8_t MAC_RECEIVER_1[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+const uint8_t MAC_SENDER_1[]   = { 0x34, 0xB7, 0xDA, 0xF6, 0x3C, 0x34 };
+const uint8_t MAC_RECEIVER_1[] = { 0x34, 0xB7, 0xDA, 0xF6, 0x39, 0x74 };
 
 // Packet Structure
 typedef struct Packet {
@@ -145,5 +145,12 @@ void loop()
 		else {
             Serial.println("Pending GPS fix...");
         }
+
+        // Water Health
+
+        // Motor
+
+
+
     }
 }
