@@ -12,6 +12,8 @@ typedef struct Packet {
     float latitude;
     float longitude;
     float altitude;
+	// output from color sensor
+    uint16_t color_r, color_g, color_b, color_c;
 } Packet;
 
 // Callback function for receiving ESP-NOW packets
@@ -34,6 +36,10 @@ void OnPacketReceived(const esp_now_recv_info_t* recv_info, const uint8_t* data,
     Serial.printf("Latitude: %.6f\n", packet->latitude);
     Serial.printf("Longitude: %.6f\n", packet->longitude);
     Serial.printf("Altitude: %.2f\n", packet->altitude);
+	Serial.printf("Color R: %d\n", packet->color_r);
+    Serial.printf("Color G: %d\n", packet->color_g);
+    Serial.printf("Color B: %d\n", packet->color_b);
+    Serial.printf("Color C: %d\n", packet->color_c);
     Serial.println("");
 }
 
