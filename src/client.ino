@@ -1,7 +1,9 @@
+// Version 1.0
+
 #include <esp_now.h>
 #include <WiFi.h>
 #include <Adafruit_GPS.h>
-#include "Adafruit_APDS9960.h"
+#include <Adafruit_APDS9960.h>
 
 #define SLEEP_SECONDS 5
 
@@ -39,7 +41,7 @@ short int systemAlert = 0;
 uint16_t color_r = 0, color_g = 0, color_b = 0, color_c = 0;
 
 // ESP-NOW Callback Function
-void OnDataSent(const uint8_t* mac_addr, esp_now_send_status_t status) {
+void OnDataSent(const esp_now_send_info_t * tx_info, esp_now_send_status_t status) {
     Serial.printf("Packet #%d Send Status: ", packetCounter);
     Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
