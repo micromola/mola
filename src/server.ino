@@ -1,4 +1,4 @@
-// Version 2.0
+//  Version 3.0
 
 #include <esp_now.h>
 #include <WiFi.h>
@@ -20,8 +20,12 @@ typedef struct Packet {
 
 // Callback function for receiving ESP-NOW packets
 void OnPacketReceived(const esp_now_recv_info_t* recv_info, const uint8_t* data, int len) {
+	// Mac Address
     const uint8_t* mac = recv_info->src_addr;
     Serial.printf("Packet received from: %02X:%02X:%02X:%02X:%02X:%02X\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    // RSSI in dBm
+	int8_t rssi = recv_info->rx_ctrl->rssi;
+	Serial.printf("RSSI: %d dBm\n", rssi);
     Serial.printf("Bytes received: %d\n", len);
 
 	// Make sure that the packet struct was received
