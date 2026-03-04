@@ -1,15 +1,23 @@
-// Version 1.0
+// Version 2.0
 
 #include <esp_now.h>
 #include <WiFi.h>
 #include <Adafruit_GPS.h>
 #include <Adafruit_APDS9960.h>
 
-#define SLEEP_SECONDS 5
+// Time Between Packet Send
+#define SLEEP_SECONDS 10
 
 // Sender and Receiver MAC addresses
 const uint8_t MAC_SENDER_1[]   = { 0x34, 0xB7, 0xDA, 0xF6, 0x3C, 0x34 };
 const uint8_t MAC_RECEIVER_1[] = { 0x34, 0xB7, 0xDA, 0xF6, 0x39, 0x74 };
+
+// Component Pin Assignments
+#define PIN_WHITE_LED 3
+#define PIN_SERVO 4
+#define PIN_PUMP 5
+#define PIN_PROPELLER_A 6
+#define PIN_PROPELLER_B 7
 
 // Packet Structure
 typedef struct Packet {
@@ -105,10 +113,15 @@ void InitEspNow()
 void WaterHealth() {
 	// Turn on Motor for 1 seconds
 	Serial.println("Motor Active.");
+	digitalWrite(PIN_PUMP, HIGH);
 	delay(1*1000);
+	digitalWrite(PIN_PUMP, LOW);
+	Serial.println("Motor Deactivated.");
 	// Turn on Servo for 1 second
-	Serial.println("Servo Rotated.");
+	digitalWrite(PIN_SERVO, HIGH);
 	delay(1*1000);
+	digitalWrite(PIN_SERVO, LOW);
+	Serial.println("Servo Rotated.");
 	/* Use RGB Sensor*/
 	//wait for color data to be ready
 	while(!apds.colorDataReady()){
@@ -124,9 +137,15 @@ void WaterHealth() {
 
 // WaterFilter
 void WaterFilter() {
-	// Turn on Motor for 1 second
-	Serial.println("Motor Active.");
+	// Turn on Propeller for 1 second
+	Serial.println("Propeller Active.");
+	digitalWrite(PIN_PROPELLER_A, HIGH);
+	digitalWrite(PIN_PROPELLER_B, HIGH);
 	delay(1*1000);
+	// I believe one of the pins is to control direction but for now I will turn both on/off as a placeholder.
+	digitalWrite(PIN_PROPELLER_A, LOW);
+	digitalWrite(PIN_PROPELLER_B, LOW);
+	Serial.println("Propeller Deactivated.");
 }
 
 // Setup Function
@@ -134,6 +153,16 @@ void setup() {
     Serial.begin(115200);
     delay(2000);
     WiFi.mode(WIFI_STA);
+
+	// Initialize Component Pins
+	pinMode(PIN_WHITE_LED, OUTPUT);
+	pinMode(PIN_SERVO, OUTPUT);
+	pinMode(PIN_PUMP, OUTPUT);
+	pinMode(PIN_PROPELLER_A, OUTPUT);
+	pinMode(PIN_PROPELLER_B, OUTPUT);
+
+	// Turn White LED On
+	digitalWrite(PIN_WHITE_LED, HIGH);
 
     // ESP now initialization
     InitEspNow();
