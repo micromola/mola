@@ -1,4 +1,4 @@
-//  Version 3.0
+//  Version 4.0
 
 #include <esp_now.h>
 #include <WiFi.h>
@@ -6,6 +6,10 @@
 // Sender and Receiver MAC addresses
 const uint8_t MAC_SENDER_1[]   = { 0x34, 0xB7, 0xDA, 0xF6, 0x3C, 0x34 };
 const uint8_t MAC_RECEIVER_1[] = { 0x34, 0xB7, 0xDA, 0xF6, 0x39, 0x74 };
+
+// Encryption Keys
+static const char* PMK_KEY_STR = "3mIcRoMoLa7xQ2pZ";
+static const char* LMK_KEY_STR = "9kR4mIcRoMoLaX5w";
 
 // Packet Structure
 typedef struct Packet {
@@ -55,6 +59,8 @@ void InitEspNow() {
         Serial.println("Error initializing ESP-NOW");
         return;
     }
+	// Set the PMK key
+    esp_now_set_pmk((uint8_t *)PMK_KEY_STR);
 
     // Register receive callback
     esp_now_register_recv_cb(OnPacketReceived);
@@ -63,7 +69,11 @@ void InitEspNow() {
     esp_now_peer_info_t peerInfo = {};
     memcpy(peerInfo.peer_addr, MAC_SENDER_1, 6);
     peerInfo.channel = 0;
-    peerInfo.encrypt = false;
+    for (uint8_t i = 0; i < 16; i++) {
+		peerInfo.lmk[i] = LMK_KEY_STR[i];
+	}
+	// Set encryption to true
+    peerInfo.encrypt = true;
 
 	// Add peer
     if (esp_now_add_peer(&peerInfo) != ESP_OK) {

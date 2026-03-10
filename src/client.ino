@@ -1,4 +1,4 @@
-// Version 3.0
+// Version 4.0
 
 #include <esp_now.h>
 #include <WiFi.h>
@@ -11,6 +11,10 @@
 // Sender and Receiver MAC addresses
 const uint8_t MAC_SENDER_1[]   = { 0x34, 0xB7, 0xDA, 0xF6, 0x3C, 0x34 };
 const uint8_t MAC_RECEIVER_1[] = { 0x34, 0xB7, 0xDA, 0xF6, 0x39, 0x74 };
+
+// Encryption Keys
+static const char* PMK_KEY_STR = "3mIcRoMoLa7xQ2pZ";
+static const char* LMK_KEY_STR = "9kR4mIcRoMoLaX5w";
 
 // Component Pin Assignments
 #define PIN_WHITE_LED 3
@@ -50,7 +54,7 @@ uint16_t color_r = 0, color_g = 0, color_b = 0, color_c = 0;
 
 // ESP-NOW Callback Function
 void OnDataSent(const esp_now_send_info_t * tx_info, esp_now_send_status_t status) {
-    Serial.printf("Packet #%d Send Status: ", packetCounter);
+    Serial.printf("Packet #%"PRIu32"4 Send Status: ", packetCounter);
     Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
 
@@ -85,7 +89,12 @@ void RegisterPeer() {
     esp_now_peer_info_t peerInfo = {};
     memcpy(peerInfo.peer_addr, MAC_RECEIVER_1, 6);
     peerInfo.channel = 0;
-    peerInfo.encrypt = false;
+	//Set the receiver device LMK key
+    for (uint8_t i = 0; i < 16; i++) {
+		peerInfo.lmk[i] = LMK_KEY_STR[i];
+	}
+    // Set encryption to true
+	peerInfo.encrypt = true;
 
 	// Add peer
     if (esp_now_add_peer(&peerInfo) != ESP_OK) {
@@ -103,6 +112,8 @@ void InitEspNow()
         Serial.println("Error initializing ESP-NOW");
         return;
     }
+	// Set PMK key
+    esp_now_set_pmk((uint8_t *)PMK_KEY_STR);
 	// Register send callback function to get status of transmitted packet
 	esp_now_register_send_cb(OnDataSent);
 	// Register the receiver as a peer
