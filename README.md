@@ -9,10 +9,7 @@
 # Testing commit
 
 ### Installation
-Before starting the project, the MAC addresses of both ESP32 Minis are required.  
-To obtain them, please run the code located in:
-
-
 Before starting the project the mac address of both ESP 32 minis are required
 To do this please use the code in `install/ESP32_Get_MAC_Address.ino`.
+A stable wifi connection is also required for the server ESP 32 mini.
 
