@@ -1,4 +1,4 @@
-// Version 4.0
+// Version 5.0
 
 #include <esp_now.h>
 #include <WiFi.h>
@@ -26,7 +26,7 @@ static const char* LMK_KEY_STR = "9kR4mIcRoMoLaX5w";
 // Packet Structure
 typedef struct Packet {
     uint32_t id;
-    short int alert;
+    int16_t alert;
     float latitude;
     float longitude;
     float altitude;
@@ -49,7 +49,7 @@ Adafruit_APDS9960 apds;
 
 unsigned long timer = 0;
 uint32_t packetCounter = 0;
-short int systemAlert = 0;
+int16_t systemAlert = 0;
 uint16_t color_r = 0, color_g = 0, color_b = 0, color_c = 0;
 
 // ESP-NOW Callback Function
@@ -162,7 +162,7 @@ void WaterFilter() {
 // Setup Function
 void setup() {
     Serial.begin(115200);
-    delay(2000);
+    delay(1000);
     WiFi.mode(WIFI_STA);
 
 	// Initialize Component Pins
