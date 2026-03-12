@@ -1,4 +1,4 @@
-//  Version 5.0
+// Version 6.0
 
 #include <esp_now.h>
 #include <WiFi.h>
